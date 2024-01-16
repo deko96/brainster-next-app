@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import Survey from "@/schemas/Survey";
 import routeHandler from "@/lib/routeHandler";
+import { revalidatePath } from "next/cache";
 
 type ApiHandlerContext = {
   params: {
@@ -52,3 +53,13 @@ export async function PATCH(request: NextRequest, context: ApiHandlerContext) {
     );
   }
 }
+
+export const DELETE = routeHandler(async (request, context) => {
+  const { surveyId } = context.params;
+
+  await prisma.survey.delete({
+    where: {
+      id: surveyId,
+    },
+  });
+});

@@ -1,28 +1,31 @@
-const surveys: any[] = [
-  {
-    id: "test-123",
-    name: "My first Survey",
-    introduction: "",
-    manager: "test@email.com",
-    status: "DRAFT",
-  },
-  {
-    id: "test-321",
-    name: "My second Survey",
-    introduction: "",
-    manager: "test2@email.com",
-    status: "ONGOING",
-  },
-  {
-    id: "test-213",
-    name: "My third Survey",
-    introduction: "",
-    manager: "test@email2.com",
-    status: "FINISHED",
-  },
-];
+"use client";
+import { SurveyListResponse } from "@/types/SurveyListResponse";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function SurveysPage() {
+  const router = useRouter();
+  const [surveys, setSurveys] = useState<SurveyListResponse["data"]>([]);
+
+  const reloadSurveys = async () => {
+    const response = await fetch(`/api/surveys`);
+    const { data } = await response.json();
+    setSurveys(data);
+  };
+
+  const handleViewSurvey = (id: string) => {
+    router.push(`/dashboard/surveys/${id}`);
+  };
+
+  const handleDeleteSurvey = async (id: string) => {
+    await fetch(`/api/surveys/${id}`, { method: "DELETE" });
+    reloadSurveys();
+  };
+
+  useEffect(() => {
+    reloadSurveys();
+  }, []);
+
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
       <div className="max-w-full overflow-x-auto">
@@ -44,7 +47,7 @@ export default function SurveysPage() {
             </tr>
           </thead>
           <tbody>
-            {surveys.map((survey, index) => (
+            {surveys.map((survey) => (
               <tr key={survey.id}>
                 <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
                   <h5 className="font-medium text-black dark:text-white">
@@ -75,7 +78,10 @@ export default function SurveysPage() {
                 </td>
                 <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                   <div className="flex items-center space-x-3.5">
-                    <button className="hover:text-primary">
+                    <button
+                      className="hover:text-primary"
+                      onClick={() => handleViewSurvey(survey.id)}
+                    >
                       <svg
                         className="fill-current"
                         width="18"
@@ -94,7 +100,10 @@ export default function SurveysPage() {
                         />
                       </svg>
                     </button>
-                    <button className="hover:text-primary">
+                    <button
+                      className="hover:text-primary"
+                      onClick={() => handleDeleteSurvey(survey.id)}
+                    >
                       <svg
                         className="fill-current"
                         width="18"
