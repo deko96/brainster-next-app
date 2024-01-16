@@ -18,14 +18,18 @@ export default function SurveyForm(props: SurveyFormProps) {
     formData.forEach((value, key) => {
       jsonData[key] = value;
     });
-    await fetch("/api/surveys", {
+
+    const response = await fetch("/api/surveys", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(jsonData),
     });
-    router.replace("/dashboard/surveys");
+
+    const { data } = await response.json();
+
+    router.replace(`/dashboard/surveys/${data.id}`);
   };
 
   return (
