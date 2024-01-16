@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { FaClone, FaTrash } from "react-icons/fa";
 import { IoReorderThreeSharp } from "react-icons/io5";
