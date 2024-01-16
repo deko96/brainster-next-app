@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { FormEventHandler } from "react";
 
 interface SurveyFormProps {
@@ -7,10 +8,24 @@ interface SurveyFormProps {
 }
 
 export default function SurveyForm(props: SurveyFormProps) {
-  const handleFormSubmit: FormEventHandler<HTMLFormElement> = (e) => {
+  const router = useRouter();
+
+  const handleFormSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const { currentTarget } = e;
     const formData = new FormData(currentTarget);
+    const jsonData: Record<string, any> = {};
+    formData.forEach((value, key) => {
+      jsonData[key] = value;
+    });
+    await fetch("/api/surveys", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(jsonData),
+    });
+    router.replace("/dashboard/surveys");
   };
 
   return (
